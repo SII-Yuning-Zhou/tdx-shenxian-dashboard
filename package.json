@@ -1,0 +1,10 @@
+{
+  "name": "tdx-github-pages-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "encrypt": "node tools/encrypt_snapshot.mjs ../tdx_shenxian_buy_alerts.json public/data/latest.enc.json",
+    "encrypt:prompt": "powershell -ExecutionPolicy Bypass -File tools/encrypt_with_prompt.ps1",
+    "preview": "python -m http.server 8788 --directory public"
+  }
+}
