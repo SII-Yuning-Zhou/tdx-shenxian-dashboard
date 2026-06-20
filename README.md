@@ -87,12 +87,11 @@ https://你的GitHub用户名.github.io/tdx-shenxian-dashboard/
 
 ```powershell
 cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-git add public/data/latest.enc.json
-git commit -m "Update encrypted signals"
-git push
+npm run encrypt:prompt
+npm run upload:data
 ```
 
-GitHub Pages 会自动更新网页。
+GitHub Pages 会自动更新网页。这个上传流程使用 GitHub CLI API，不依赖 `git push`。
 
 ## 安全注意
 
