@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>神线实盘信号</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell" data-state="loading">
+    <header class="topbar">
+      <div>
+        <h1>神线实盘信号</h1>
+        <p id="subtitle">输入密码后在浏览器本地解密</p>
+      </div>
+      <div class="topbar-actions">
+        <span id="statusPill" class="status-pill">连接中</span>
+        <button id="refreshButton" class="icon-button" type="button" aria-label="刷新">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v6h-6"/></svg>
+        </button>
+        <button id="logoutButton" class="text-button" type="button">退出</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="loginPanel" class="login-panel" aria-labelledby="loginTitle">
+        <form id="loginForm" class="login-box">
+          <h2 id="loginTitle">访问密码</h2>
+          <label for="passwordInput">密码</label>
+          <div class="password-row">
+            <input id="passwordInput" name="password" type="password" autocomplete="current-password" required />
+            <button class="primary-button" type="submit">进入</button>
+          </div>
+          <p id="loginError" class="form-error" role="alert"></p>
+        </form>
+      </section>
+
+      <section id="dashboardPanel" class="dashboard-panel" hidden>
+        <div class="metrics-grid">
+          <article class="metric">
+            <b id="buyCount">0</b>
+            <span>买入信号</span>
+          </article>
+          <article class="metric">
+            <b id="sellCount">0</b>
+            <span>卖出提醒</span>
+          </article>
+          <article class="metric">
+            <b id="holdingCount">0</b>
+            <span>真实持仓</span>
+          </article>
+          <article class="metric">
+            <b id="latestSignal">-</b>
+            <span>最新信号</span>
+          </article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel buy-panel">
+            <div class="panel-head">
+              <h2>买入信号</h2>
+              <span id="buyMeta">-</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="rank">序</th>
+                    <th class="time">时间</th>
+                    <th class="stock">股票</th>
+                    <th class="reason">信号</th>
+                    <th class="num">现价</th>
+                    <th class="num">MA60</th>
+                    <th class="num">得分</th>
+                  </tr>
+                </thead>
+                <tbody id="buyTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="side-column">
+            <section class="panel sell-panel">
+              <div class="panel-head">
+                <h2>卖出提醒</h2>
+                <span id="sellMeta">-</span>
+              </div>
+              <div class="table-wrap compact">
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="time">时间</th>
+                      <th class="stock">股票</th>
+                      <th class="reason">信号</th>
+                      <th class="num">得分</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sellTable"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel holdings-panel">
+              <div class="panel-head">
+                <h2>真实持仓</h2>
+                <span id="holdingsMeta">-</span>
+              </div>
+              <div id="holdingsList" class="holdings-list"></div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/app.js" defer></script>
+</body>
+</html>
