@@ -5,6 +5,7 @@
   "scripts": {
     "encrypt": "node tools/encrypt_snapshot.mjs ../tdx_shenxian_buy_alerts.json public/data/latest.enc.json",
     "encrypt:prompt": "powershell -ExecutionPolicy Bypass -File tools/encrypt_with_prompt.ps1",
+    "upload:data": "powershell -ExecutionPolicy Bypass -File tools/upload_encrypted_data.ps1",
     "preview": "python -m http.server 8788 --directory public"
   }
 }
