@@ -148,6 +148,21 @@ function displayNumber(value) {
   return number.toFixed(2);
 }
 
+function latestChartMa60(item) {
+  const points = Array.isArray(item?.chart?.points) ? item.chart.points : [];
+  for (let index = points.length - 1; index >= 0; index -= 1) {
+    const value = Number(points[index]?.ma60);
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+  return null;
+}
+
+function displayMa60(item) {
+  const dailyMa = Number(item?.daily_ma);
+  if (Number.isFinite(dailyMa) && dailyMa > 0) return displayNumber(dailyMa);
+  return displayNumber(latestChartMa60(item));
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -165,69 +180,184 @@ function newestSignalTime(items) {
     .at(-1) || "-";
 }
 
-function createSparkline(chart) {
-  const points = Array.isArray(chart?.points) ? chart.points.slice(-42) : [];
-  if (points.length < 2) return "";
+function signalSortTime(item) {
+  return String(item?.signal_time || item?.scan_time || "");
+}
 
-  const width = 820;
-  const height = 92;
-  const pad = 12;
-  const keys = ["close", "var1", "var4", "ma60"];
-  const values = points.flatMap((point) => keys.map((key) => Number(point[key]))).filter(Number.isFinite);
-  if (!values.length) return "";
+function signalSortRank(item, fallbackIndex) {
+  const rank = Number(item?.rank);
+  return Number.isFinite(rank) ? rank : fallbackIndex + 1;
+}
 
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = max - min || 1;
-  const x = (index) => pad + (index * (width - pad * 2)) / (points.length - 1);
-  const y = (value) => height - pad - ((Number(value) - min) * (height - pad * 2)) / span;
-  const line = (key) => points.map((point, index) => `${x(index).toFixed(1)},${y(point[key]).toFixed(1)}`).join(" ");
+function newestSignalsFirst(items) {
+  return items
+    .map((item, index) => ({ item, index }))
+    .sort((left, right) => {
+      const timeOrder = signalSortTime(right.item).localeCompare(signalSortTime(left.item));
+      if (timeOrder !== 0) return timeOrder;
 
+      const rankOrder = signalSortRank(left.item, left.index) - signalSortRank(right.item, right.index);
+      if (rankOrder !== 0) return rankOrder;
+
+      return left.index - right.index;
+    })
+    .map((entry) => entry.item);
+}
+
+const INDUSTRY_COLORS = [
+  "#b42318",
+  "#026aa2",
+  "#087443",
+  "#854a0e",
+  "#6941c6",
+  "#c11574",
+  "#0e7090",
+  "#4e5ba6",
+  "#b54708",
+  "#3f621a",
+  "#175cd3",
+  "#5925dc",
+];
+
+function sanitizeColor(value) {
+  const color = String(value || "").trim();
+  return /^#[0-9a-fA-F]{6}$/.test(color) ? color : "";
+}
+
+function hashText(value) {
+  const text = String(value || "");
+  let hash = 2166136261;
+  for (let index = 0; index < text.length; index += 1) {
+    hash ^= text.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function industryColor(industry) {
+  const text = String(industry || "").trim();
+  if (!text) return "#667085";
+  return INDUSTRY_COLORS[hashText(text) % INDUSTRY_COLORS.length];
+}
+
+function compactSignalLabel(item, type) {
+  const signalType = String(item.signal_type || "").toLowerCase();
+  const reason = String(item.reason || item.signal_type || "").trim();
+  const period = String(item.period || "60m").trim();
+  if (type === "buy" || signalType.includes("turn_red") || reason.includes("转红")) {
+    return `${period}转红`;
+  }
+  if (type === "sell" || signalType.includes("turn_green") || reason.includes("转绿") || reason.includes("变绿")) {
+    return `${period}转绿`;
+  }
+  return reason || "-";
+}
+
+function renderStockCell(item) {
+  const stock = escapeHtml(item.stock || "");
+  const stockName = escapeHtml(item.stock_name || item.stock || "");
+  const rawIndustry = String(item.industry || (Array.isArray(item.boards) ? item.boards[0] : "") || "").trim();
+  const industry = escapeHtml(rawIndustry);
+  const color = sanitizeColor(item.industry_color) || industryColor(rawIndustry);
+  const industryChip = industry
+    ? `<span class="industry-chip" style="--industry-color: ${color};">${industry}</span>`
+    : "";
+  return `<td class="stock"><span class="stock-code">${stock}</span><span class="stock-name">${stockName}</span>${industryChip}</td>`;
+}
+
+function renderStoryCell(item) {
+  const boards = Array.isArray(item.boards) ? item.boards.filter(Boolean).join(" / ") : "";
+  const boardsText = String(item.boards_text || boards || "").trim();
+  const rawBusiness = String(item.business || item.main_business || "").trim();
+  const businessWithoutBoardPrefix = rawBusiness.replace(/^板块[:：]\s*/, "").trim();
+  const displayBusiness = boardsText && businessWithoutBoardPrefix === boardsText ? "" : rawBusiness;
+  const visibleBusiness = escapeHtml(displayBusiness);
+  const rawThemeLine = String(item.theme_line || item.research_theme || item.concept_line || "").trim();
+  const themeLine = escapeHtml(rawThemeLine);
+  const rawSummary = String(item.research_summary || item.catalyst || "").trim();
+  const summary = escapeHtml(rawSummary);
+  const conceptTags = Array.isArray(item.concept_tags) ? item.concept_tags.filter(Boolean).slice(0, 5) : [];
+  const themeLineHtml = themeLine
+    ? `<span class="theme-line" title="${escapeHtml(rawSummary || rawThemeLine)}">${themeLine}</span>`
+    : "";
+  const conceptRow = conceptTags.length
+    ? `<span class="concept-row">${conceptTags.map((tag) => `<span class="concept-chip">${escapeHtml(tag)}</span>`).join("")}</span>`
+    : "";
+  const summaryLine = summary && summary !== themeLine
+    ? `<span class="research-summary" title="${summary}">${summary}</span>`
+    : "";
+  const businessLine = visibleBusiness
+    ? `<span class="business-line" title="${visibleBusiness}">${visibleBusiness}</span>`
+    : "";
+  const boardsLine = boardsText
+    ? `<span class="boards-line" title="${escapeHtml(boardsText)}">板块：${escapeHtml(boardsText)}</span>`
+    : "";
+  return `<td class="story">${themeLineHtml}${conceptRow}${summaryLine}${businessLine}${boardsLine}</td>`;
+}
+
+function renderTimeCell(value) {
+  const raw = String(value || "");
+  const compact = compactTime(raw);
+  const parts = compact.split(/\s+/).filter(Boolean);
+  const date = parts[0] || compact;
+  const clock = parts[1] || "";
+  return `<td class="time" title="${escapeHtml(raw)}"><span class="time-date">${escapeHtml(date)}</span><span class="time-clock">${escapeHtml(clock)}</span></td>`;
+}
+
+function renderTradeCell(item, type) {
+  const reason = escapeHtml(item.reason || item.signal_type || "");
+  const signalLabel = escapeHtml(compactSignalLabel(item, type));
+  const metrics = [
+    ["现价", displayNumber(item.price)],
+    ["MA60", displayMa60(item)],
+    ["得分", displayNumber(item.score)],
+  ].filter((entry) => entry[1]);
+  const indicators = metrics.map(([label, value]) => `
+    <span class="indicator">
+      <span class="indicator-label">${escapeHtml(label)}</span>
+      <span class="indicator-value">${escapeHtml(value)}</span>
+    </span>
+  `).join("");
   return `
-    <svg class="sparkline" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="信号走势">
-      <polyline points="${line("close")}" fill="none" stroke="#f8fafc" stroke-width="1.6" vector-effect="non-scaling-stroke" />
-      <polyline points="${line("var1")}" fill="none" stroke="#ef4444" stroke-width="1.4" vector-effect="non-scaling-stroke" />
-      <polyline points="${line("var4")}" fill="none" stroke="#22c55e" stroke-width="1.2" vector-effect="non-scaling-stroke" />
-      <polyline points="${line("ma60")}" fill="none" stroke="#60a5fa" stroke-width="1.2" vector-effect="non-scaling-stroke" />
-      <text x="12" y="17">close / VAR1 / VAR4 / MA60</text>
-    </svg>
+    <td class="trade-cell">
+      <div class="trade-stack">
+        <span class="tag signal-chip" title="${reason}">${signalLabel}</span>
+        <span class="indicator-grid">${indicators}</span>
+      </div>
+    </td>
   `;
 }
 
 function renderSignalRows(items, type) {
   if (!items.length) {
-    const colspan = type === "buy" ? 7 : 4;
+    const colspan = type === "buy" ? 5 : 3;
     return `<tr><td class="empty-cell" colspan="${colspan}">暂无信号</td></tr>`;
   }
 
-  return items.map((item, index) => {
-    const stock = escapeHtml(item.stock || "");
-    const stockName = escapeHtml(item.stock_name || item.stock || "");
-    const reason = escapeHtml(item.reason || item.signal_type || "");
+  return newestSignalsFirst(items).map((item, index) => {
+    const timeCell = renderTimeCell(item.signal_time);
+    const stockCell = renderStockCell(item);
+    const tradeCell = renderTradeCell(item, type);
 
     if (type === "sell") {
       return `
         <tr>
-          <td class="time" title="${escapeHtml(item.signal_time || "")}">${escapeHtml(compactTime(item.signal_time))}</td>
-          <td class="stock"><span class="stock-code">${stock}</span><span class="stock-name">${stockName}</span></td>
-          <td class="reason"><span class="tag">${reason}</span></td>
-          <td class="num strong">${escapeHtml(displayNumber(item.score))}</td>
+          ${timeCell}
+          ${stockCell}
+          ${tradeCell}
         </tr>
       `;
     }
 
-    const chart = createSparkline(item.chart);
+    const storyCell = renderStoryCell(item);
     return `
       <tr>
         <td class="rank">${escapeHtml(item.rank || index + 1)}</td>
-        <td class="time" title="${escapeHtml(item.signal_time || "")}">${escapeHtml(compactTime(item.signal_time))}</td>
-        <td class="stock"><span class="stock-code">${stock}</span><span class="stock-name">${stockName}</span></td>
-        <td class="reason"><span class="tag">${reason}</span></td>
-        <td class="num">${escapeHtml(displayNumber(item.price))}</td>
-        <td class="num">${escapeHtml(displayNumber(item.daily_ma))}</td>
-        <td class="num strong">${escapeHtml(displayNumber(item.score))}</td>
+        ${timeCell}
+        ${stockCell}
+        ${storyCell}
+        ${tradeCell}
       </tr>
-      ${chart ? `<tr class="chart-row"><td colspan="7">${chart}</td></tr>` : ""}
     `;
   }).join("");
 }

@@ -3,9 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "encrypt": "node tools/encrypt_snapshot.mjs ../tdx_shenxian_buy_alerts.json public/data/latest.enc.json",
+    "encrypt": "node tools/encrypt_snapshot.mjs ../output/live/tdx_shenxian_buy_alerts.json public/data/latest.enc.json",
     "encrypt:prompt": "powershell -ExecutionPolicy Bypass -File tools/encrypt_with_prompt.ps1",
     "upload:data": "powershell -ExecutionPolicy Bypass -File tools/upload_encrypted_data.ps1",
+    "config:open": "notepad dashboard.config.txt",
+    "password:save": "powershell -ExecutionPolicy Bypass -File tools/save_dashboard_password.ps1",
+    "run:live:auto-upload": "powershell -ExecutionPolicy Bypass -File tools/run_tdx_auto_upload.ps1 live",
+    "run:once:auto-upload": "powershell -ExecutionPolicy Bypass -File tools/run_tdx_auto_upload.ps1 once",
     "preview": "python -m http.server 8788 --directory public"
   }
 }

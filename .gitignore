@@ -1,4 +1,9 @@
 node_modules/
 .env
+dashboard.config.txt
+dashboard.password.txt
+.dashboard-password
+*.password.local
 *.log
 *.cloud.sha256
+.cloud/

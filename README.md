@@ -7,7 +7,7 @@
 
 ```text
 通达信本机脚本
-  -> 写出 tdx_shenxian_buy_alerts.json
+  -> 写出 output/live/tdx_shenxian_buy_alerts.json
   -> 使用 TDX_DASHBOARD_VIEW_PASSWORD 加密
   -> 生成 public/data/latest.enc.json
   -> git commit / push 到 GitHub
@@ -31,6 +31,65 @@
 $env:TDX_DASHBOARD_VIEW_PASSWORD="换成你的强密码"
 ```
 
+也可以把访问密码保存成本地文件，之后脚本会自动读取。这个文件只放在本机，并已加入
+`.gitignore`：
+
+```powershell
+cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
+npm run password:save
+```
+
+默认保存位置是：
+
+```text
+F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard\dashboard.password.txt
+```
+
+读取优先级是：`TDX_DASHBOARD_VIEW_PASSWORD` 环境变量优先，其次读取
+`dashboard.password.txt`。如果你想放到别的位置，可以设置：
+
+```powershell
+$env:TDX_DASHBOARD_PASSWORD_FILE="D:\private\tdx-dashboard-password.txt"
+```
+
+## 本地配置文件
+
+更直观的本地配置文件是：
+
+```text
+F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard\dashboard.config.txt
+```
+
+它已经加入 `.gitignore`，不会上传到 GitHub。可以用记事本打开：
+
+```powershell
+cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
+npm run config:open
+```
+
+最常改的是这一行：
+
+```text
+AUTO_UPLOAD=1
+```
+
+- `AUTO_UPLOAD=1`：每次扫描后自动上传到 GitHub Pages。
+- `AUTO_UPLOAD=0`：只更新本地加密文件，不上传 GitHub。
+
+当前支持的配置项：
+
+```text
+AUTO_UPLOAD=1
+UPLOAD_ONLY_ON_CHANGE=1
+PASSWORD_FILE=dashboard.password.txt
+GITHUB_REPO=SII-Yuning-Zhou/tdx-shenxian-dashboard
+REMOTE_PATH=public/data/latest.enc.json
+ENCRYPTED_JSON=public/data/latest.enc.json
+UPLOAD_STATE_FILE=.cloud/latest.source.sha256
+```
+
+环境变量仍然优先于配置文件，方便临时覆盖。
+
 手工加密当前信号：
 
 ```powershell
@@ -47,6 +106,22 @@ npm run encrypt:prompt
 也可以直接运行原来的通达信扫描脚本。只要设置了 `TDX_DASHBOARD_VIEW_PASSWORD`，
 [tdx_shenxian_quant.py](../tdx_shenxian_quant.py) 每次写出本地 JSON 后会自动更新
 `public/data/latest.enc.json`。
+
+如果希望每次扫描写出新数据后自动上传到 GitHub Pages，再额外打开上传开关：
+
+```powershell
+$env:TDX_DASHBOARD_AUTO_UPLOAD="1"
+```
+
+打开这个开关后，脚本会在每次成功加密后自动调用 `tools/upload_encrypted_data.ps1`。
+如果不设置这个变量，就只更新本地加密文件，不会上传。
+
+可选：如果以后仓库地址或远端文件路径变化，可以覆盖默认值：
+
+```powershell
+$env:TDX_DASHBOARD_GITHUB_REPO="SII-Yuning-Zhou/tdx-shenxian-dashboard"
+$env:TDX_DASHBOARD_REMOTE_PATH="public/data/latest.enc.json"
+```
 
 ## 本地预览
 
@@ -93,9 +168,36 @@ npm run upload:data
 
 GitHub Pages 会自动更新网页。这个上传流程使用 GitHub CLI API，不依赖 `git push`。
 
+如果已经在运行通达信扫描脚本的 PowerShell 窗口里设置了：
+
+```powershell
+$env:TDX_DASHBOARD_VIEW_PASSWORD="你的访问密码"
+$env:TDX_DASHBOARD_AUTO_UPLOAD="1"
+```
+
+那么每次扫描完成写出新 JSON 后，会自动加密并上传到 GitHub，无需再手工执行
+`npm run upload:data`。GitHub Pages 发布通常会有几十秒到一两分钟延迟。
+
+更推荐的启动方式是使用隐藏密码输入脚本：
+
+```powershell
+cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
+npm run run:live:auto-upload
+```
+
+如果已经保存了 `dashboard.password.txt`，这个命令会直接读取本地密码文件；如果没有保存，
+会要求输入网页访问密码，输入内容不会显示在屏幕上。然后它会以 `live` 模式运行
+`tdx_shenxian_quant.py`，并按照 `dashboard.config.txt` 里的 `AUTO_UPLOAD` 决定是否上传。
+只扫描一次可以用：
+
+```powershell
+npm run run:once:auto-upload
+```
+
 ## 安全注意
 
 - 访问密码一定要足够长，建议至少 12-20 位，包含大小写、数字或符号。
 - 不要把 `TDX_DASHBOARD_VIEW_PASSWORD` 写进代码或提交到 GitHub。
+- `dashboard.password.txt` 是本机明文密码文件，不要发给别人，也不要上传到网盘或 GitHub。
 - GitHub 免费公开仓库的源码和加密数据都是公开的，安全性依赖访问密码强度。
 - 如果怀疑密码泄漏，换一个新密码，重新生成 `latest.enc.json` 并推送。

@@ -1,10 +1,29 @@
 param(
-    [string]$Repo = "SII-Yuning-Zhou/tdx-shenxian-dashboard",
-    [string]$LocalPath = "public\data\latest.enc.json",
-    [string]$RemotePath = "public/data/latest.enc.json"
+    [string]$Repo = "",
+    [string]$LocalPath = "",
+    [string]$RemotePath = "",
+    [string]$ConfigFile = ""
 )
 
 $ErrorActionPreference = "Stop"
+
+$projectRoot = Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")
+. (Join-Path $PSScriptRoot "dashboard_config.ps1")
+
+$configFileSetting = $ConfigFile
+if ([string]::IsNullOrWhiteSpace($configFileSetting)) {
+    $configFileSetting = [Environment]::GetEnvironmentVariable("TDX_DASHBOARD_CONFIG_FILE", "Process")
+}
+if ([string]::IsNullOrWhiteSpace($configFileSetting)) {
+    $configFileSetting = "dashboard.config.txt"
+}
+$configPath = Resolve-LocalPath $configFileSetting $projectRoot
+$config = Read-DashboardConfig $configPath
+
+$Repo = Get-DashboardSetting $config $Repo "TDX_DASHBOARD_GITHUB_REPO" "GITHUB_REPO" "SII-Yuning-Zhou/tdx-shenxian-dashboard"
+$LocalPath = Get-DashboardSetting $config $LocalPath "TDX_DASHBOARD_ENCRYPTED_JSON" "ENCRYPTED_JSON" "public\data\latest.enc.json"
+$RemotePath = Get-DashboardSetting $config $RemotePath "TDX_DASHBOARD_REMOTE_PATH" "REMOTE_PATH" "public/data/latest.enc.json"
+$LocalPath = Resolve-LocalPath $LocalPath $projectRoot
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
     throw "GitHub CLI gh was not found in PATH"

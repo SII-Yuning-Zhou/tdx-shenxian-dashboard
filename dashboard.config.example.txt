@@ -1,0 +1,23 @@
+# Local dashboard config template.
+# Copy to dashboard.config.txt for local use.
+
+# 1 = upload encrypted data to GitHub after each scan.
+# 0 = only write local encrypted data.
+AUTO_UPLOAD=1
+
+# 1 = skip encryption/upload when the signal JSON content is unchanged.
+# 0 = publish every scan even if the visible signal content is unchanged.
+UPLOAD_ONLY_ON_CHANGE=1
+
+# Local password file. Do not put the password itself in this config.
+PASSWORD_FILE=dashboard.password.txt
+
+# GitHub repo and target path used by the upload script.
+GITHUB_REPO=SII-Yuning-Zhou/tdx-shenxian-dashboard
+REMOTE_PATH=public/data/latest.enc.json
+
+# Local encrypted output path.
+ENCRYPTED_JSON=public/data/latest.enc.json
+
+# Local state file used by UPLOAD_ONLY_ON_CHANGE. Keep it ignored by Git.
+UPLOAD_STATE_FILE=.cloud/latest.source.sha256
