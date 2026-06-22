@@ -244,11 +244,12 @@ function compactSignalLabel(item, type) {
   const signalType = String(item.signal_type || "").toLowerCase();
   const reason = String(item.reason || item.signal_type || "").trim();
   const period = String(item.period || "60m").trim();
+  const realtime = item.is_realtime || reason.includes("实时") ? "实时" : "";
   if (type === "buy" || signalType.includes("turn_red") || reason.includes("转红")) {
-    return `${period}转红`;
+    return `${period}${realtime}转红`;
   }
   if (type === "sell" || signalType.includes("turn_green") || reason.includes("转绿") || reason.includes("变绿")) {
-    return `${period}转绿`;
+    return `${period}${realtime}转绿`;
   }
   return reason || "-";
 }
