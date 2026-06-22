@@ -1,203 +1,25 @@
-# 神线 GitHub Pages 加密看板
+# SignalBoard Live
 
-这是一个适合 GitHub Pages 免费托管的静态版看板。GitHub Pages 只提供静态网页，
-所以访问密码不会发到服务器校验，而是在浏览器里用于本地解密 `public/data/latest.enc.json`。
+SignalBoard Live 鏄竴涓潰鍚?A 鑲＄洏涓瀵熺殑閲忓寲瀹炵洏淇″彿鐪嬫澘锛岀敤浜庢妸绛栫暐绛涢€夈€佹寔浠撶洃鎺с€侀鏉愮爺绌跺拰鐩樹腑鑺傚缁熶竴灞曠ず鍦ㄤ竴涓彲杩滅▼璁块棶鐨勭綉椤典腑銆?
+瀹冪殑瀹氫綅涓嶆槸浜ゆ槗涓嬪崟绯荤粺锛岃€屾槸涓€涓疄鐩樼爺绌朵笌椋庨櫓鎻愰啋宸ュ叿锛氳浣跨敤鑰呭湪寮€鐩樻湡闂存洿蹇湅鍒版柊鐨勫€欓€変俊鍙枫€佹寔浠撳彉鍖栧拰鐩稿叧棰樻潗鑳屾櫙锛屽噺灏戝湪澶氫釜杞欢鍜屾枃浠朵箣闂存潵鍥炲垏鎹€?
+## 鏍稿績鑳藉姏
 
-## 工作方式
+- 鐩樹腑淇″彿鐪嬫澘锛氶泦涓睍绀虹瓥鐣ヨЕ鍙戠殑杞娍淇″彿銆佹渶鏂颁环鏍笺€佸潎绾跨姸鎬佸拰淇″彿寮哄害銆?- 瀹炴椂涓庡浐瀹氬懆鏈熷苟琛岋細鍚屾椂淇濈暀鐩樹腑瀹炴椂鐩戞帶鍜?60 鍒嗛挓瀹屾垚鍛ㄦ湡纭锛屼究浜庡尯鍒嗏€滄鍦ㄥ舰鎴愮殑鏈轰細鈥濆拰鈥滃凡缁忕‘璁ょ殑鑺傜偣鈥濄€?- 鎸佷粨椋庨櫓鎻愰啋锛氶拡瀵圭湡瀹炴寔浠撶嫭绔嬬洃鎺ц浆寮变俊鍙凤紝甯姪鍙婃椂鍙戠幇闇€瑕佸叧娉ㄧ殑浠撲綅銆?- 鐮旀姤棰樻潗澧炲己锛氫负鍊欓€夎偂绁ㄨˉ鍏呬富钀ヤ笟鍔°€佽涓氭爣绛俱€侀鏉愮嚎绱㈠拰姒傚康鍏抽敭璇嶏紝璁╀俊鍙蜂笉鍙槸涓€涓唬鐮併€?- 琛屼笟棰滆壊鍒嗙粍锛氱浉杩戣涓氬拰棰樻潗浣跨敤涓€鑷寸殑瑙嗚鏍囪瘑锛屾柟渚垮揩閫熸壂瑙嗗綋鏃ヤ富绾裤€?- 杩滅▼鐪嬫澘璁块棶锛氭敮鎸佸湪鎵嬫満銆佸钩鏉挎垨鍏朵粬鐢佃剳涓婃煡鐪嬬洏涓湅鏉匡紝閫傚悎涓汉鎴栧皬鍥㈤槦鍚屾瑙傚療銆?- 璁块棶淇濇姢锛氱湅鏉垮唴瀹归粯璁ら渶瑕佹巿鏉冭闂紝閫傚悎灞曠ず缁欐寚瀹氫汉鍛樿€屼笉鏄畬鍏ㄥ叕寮€瑁稿銆?
+## 閫傚悎鍦烘櫙
 
-```text
-通达信本机脚本
-  -> 写出 output/live/tdx_shenxian_buy_alerts.json
-  -> 使用 TDX_DASHBOARD_VIEW_PASSWORD 加密
-  -> 生成 public/data/latest.enc.json
-  -> git commit / push 到 GitHub
-  -> GitHub Pages 发布 public/
-```
+- 寮€鐩樻湡闂磋窡韪瓥鐣ュ€欓€夎偂鍙樺寲銆?- 瑙傚療 60 鍒嗛挓绾у埆鐨勮浆绾€佽浆缁夸俊鍙枫€?- 鎶婄煭绾夸俊鍙峰拰鐮旀姤棰樻潗淇℃伅鏀惧湪鍚屼竴涓晫闈㈤噷鍒ゆ柇銆?- 瀵圭湡瀹炴寔浠撳仛鐙珛鐨勯闄╂彁閱掋€?- 鍦ㄥ鍑烘垨涓嶅湪浜ゆ槗涓绘満鍓嶆椂锛岄€氳繃缃戦〉鏌ョ湅瀹炵洏鐘舵€併€?
+## 鐪嬫澘鍐呭
 
-公开仓库里只有加密后的数据文件。别人可以下载密文，但没有访问密码不能解密看到信号。
+涓婚〉鐪嬫澘浼氭寜瀹炵洏鑺傚灞曠ず鍑犵被淇℃伅锛?
+- 杞孩妫€娴嬶細绛栫暐鐩戞帶姹犱腑鍑虹幇鐨勬綔鍦ㄤ拱鐐规垨鍏虫敞鐐广€?- 鍥哄畾鍛ㄦ湡纭锛氬凡缁忚蛋瀹岀殑 60 鍒嗛挓鑺傜偣淇″彿銆?- 鎸佷粨杞豢鎻愰啋锛氬彧閽堝褰撳墠鐪熷疄鎸佷粨鐨勯闄╀俊鍙枫€?- 鐪熷疄鎸佷粨鍒楄〃锛氱敤浜庢牳瀵瑰綋鍓嶇洃鎺ц寖鍥淬€?- 棰樻潗瑙ｉ噴锛氫富钀ヤ笟鍔°€佽涓氬綊灞炪€佺爺鎶ョ嚎绱㈠拰姒傚康鏍囩銆?
+杩欎簺淇℃伅浼氬敖閲忔寜鏈€鏂版椂闂存帓搴忥紝璁╂柊鍑虹幇鐨勪俊鍙蜂紭鍏堣鐪嬪埌銆?
+## 璁捐鍘熷垯
 
-## 目录
+- 瀹炵洏浼樺厛锛氱洏涓壂鎻忎笉搴旇缃戦〉鐢熸垚鎴栬繙绋嬪悓姝ユ嫋鎱€?- 杞婚噺璁块棶锛氱綉椤电鍙礋璐ｅ睍绀猴紝涓嶆壙鎷呭鏉備氦鏄撻€昏緫銆?- 淇℃伅鍘嬬缉锛氬悓涓€灞忓唴灏介噺鍛堢幇浠ｇ爜銆佸悕绉般€佷俊鍙枫€佹寚鏍囧拰棰樻潗鑳屾櫙銆?- 鏈湴鍙帶锛氭牳蹇冪瓥鐣ュ拰鏁版嵁澶勭悊杩愯鍦ㄦ湰鍦扮幆澧冧腑锛岃繙绋嬮〉闈㈠彧浣滀负灞曠ず灞傘€?- 鍙墿灞曪細鍚庣画鍙互缁х画鍔犲叆鏃ョ嚎淇″彿銆佹洿澶氬懆鏈熴€佽涓氱儹搴﹀拰鍥炴祴鍥炴斁瑙嗗浘銆?
+## 椋庨櫓璇存槑
 
-- `public/`：GitHub Pages 发布目录。
-- `public/data/latest.enc.json`：最新加密信号数据。
-- `tools/encrypt_snapshot.mjs`：把本地 JSON 加密成 GitHub Pages 数据文件。
-- `.github/workflows/pages.yml`：GitHub Actions 自动发布 Pages。
+鏈」鐩粎鐢ㄤ簬閲忓寲鐮旂┒銆佺洏涓瀵熷拰淇″彿璁板綍锛屼笉鏋勬垚浠讳綍鎶曡祫寤鸿锛屼篃涓嶄繚璇佷俊鍙锋敹鐩娿€傚競鍦烘尝鍔ㄣ€佹暟鎹欢杩熴€佹ā鍨嬪亣璁惧拰鎵ц鏉′欢閮戒細褰卞搷瀹為檯缁撴灉銆備娇鐢ㄨ€呭簲缁撳悎鑷韩浜ゆ槗璁″垝銆侀闄╂壙鍙楄兘鍔涘拰鐙珛鍒ゆ柇浣跨敤銆?
+## 褰撳墠鐘舵€?
+椤圭洰澶勪簬鎸佺画杩唬闃舵锛岄噸鐐逛紭鍖栨柟鍚戝寘鎷細
 
-## 生成加密数据
-
-先设置访问密码。这个密码就是用户打开网页时输入的密码：
-
-```powershell
-$env:TDX_DASHBOARD_VIEW_PASSWORD="换成你的强密码"
-```
-
-也可以把访问密码保存成本地文件，之后脚本会自动读取。这个文件只放在本机，并已加入
-`.gitignore`：
-
-```powershell
-cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-npm run password:save
-```
-
-默认保存位置是：
-
-```text
-F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard\dashboard.password.txt
-```
-
-读取优先级是：`TDX_DASHBOARD_VIEW_PASSWORD` 环境变量优先，其次读取
-`dashboard.password.txt`。如果你想放到别的位置，可以设置：
-
-```powershell
-$env:TDX_DASHBOARD_PASSWORD_FILE="D:\private\tdx-dashboard-password.txt"
-```
-
-## 本地配置文件
-
-更直观的本地配置文件是：
-
-```text
-F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard\dashboard.config.txt
-```
-
-它已经加入 `.gitignore`，不会上传到 GitHub。可以用记事本打开：
-
-```powershell
-cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-npm run config:open
-```
-
-最常改的是这一行：
-
-```text
-AUTO_UPLOAD=1
-```
-
-- `AUTO_UPLOAD=1`：每次扫描后自动上传到 GitHub Pages。
-- `AUTO_UPLOAD=0`：只更新本地加密文件，不上传 GitHub。
-
-当前支持的配置项：
-
-```text
-AUTO_UPLOAD=1
-UPLOAD_ONLY_ON_CHANGE=1
-PASSWORD_FILE=dashboard.password.txt
-GITHUB_REPO=SII-Yuning-Zhou/tdx-shenxian-dashboard
-REMOTE_PATH=public/data/latest.enc.json
-ENCRYPTED_JSON=public/data/latest.enc.json
-UPLOAD_STATE_FILE=.cloud/latest.source.sha256
-```
-
-环境变量仍然优先于配置文件，方便临时覆盖。
-
-手工加密当前信号：
-
-```powershell
-cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-npm run encrypt
-```
-
-不想把密码显示在命令行里时，使用隐藏输入：
-
-```powershell
-npm run encrypt:prompt
-```
-
-也可以直接运行原来的通达信扫描脚本。只要设置了 `TDX_DASHBOARD_VIEW_PASSWORD`，
-[tdx_shenxian_quant.py](../tdx_shenxian_quant.py) 每次写出本地 JSON 后会自动更新
-`public/data/latest.enc.json`。
-
-如果希望每次扫描写出新数据后自动上传到 GitHub Pages，再额外打开上传开关：
-
-```powershell
-$env:TDX_DASHBOARD_AUTO_UPLOAD="1"
-```
-
-打开这个开关后，脚本会在每次成功加密后自动调用 `tools/upload_encrypted_data.ps1`。
-如果不设置这个变量，就只更新本地加密文件，不会上传。
-
-可选：如果以后仓库地址或远端文件路径变化，可以覆盖默认值：
-
-```powershell
-$env:TDX_DASHBOARD_GITHUB_REPO="SII-Yuning-Zhou/tdx-shenxian-dashboard"
-$env:TDX_DASHBOARD_REMOTE_PATH="public/data/latest.enc.json"
-```
-
-## 本地预览
-
-```powershell
-cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-npm run preview
-```
-
-打开：
-
-```text
-http://127.0.0.1:8788
-```
-
-本地预览如果还没有真实加密数据，会回退到 `public/mock/latest.enc.json`。示例密码是：
-
-```text
-demo-password
-```
-
-## 发布到 GitHub Pages
-
-1. 在 GitHub 创建一个公开仓库，例如 `tdx-shenxian-dashboard`。
-2. 把 `F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard` 作为仓库根目录推送上去。
-3. 在仓库页面进入 `Settings -> Pages`。
-4. `Source` 选择 `GitHub Actions`。
-5. 推送到 `main` 分支后，`.github/workflows/pages.yml` 会自动发布 `public/`。
-
-发布地址通常是：
-
-```text
-https://你的GitHub用户名.github.io/tdx-shenxian-dashboard/
-```
-
-## 每次更新数据
-
-本机扫描产生新信号后：
-
-```powershell
-cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-npm run encrypt:prompt
-npm run upload:data
-```
-
-GitHub Pages 会自动更新网页。这个上传流程使用 GitHub CLI API，不依赖 `git push`。
-
-如果已经在运行通达信扫描脚本的 PowerShell 窗口里设置了：
-
-```powershell
-$env:TDX_DASHBOARD_VIEW_PASSWORD="你的访问密码"
-$env:TDX_DASHBOARD_AUTO_UPLOAD="1"
-```
-
-那么每次扫描完成写出新 JSON 后，会自动加密并上传到 GitHub，无需再手工执行
-`npm run upload:data`。GitHub Pages 发布通常会有几十秒到一两分钟延迟。
-
-更推荐的启动方式是使用隐藏密码输入脚本：
-
-```powershell
-cd F:\new_tdx64\PYPlugins\user\tdx-cloud-dashboard
-npm run run:live:auto-upload
-```
-
-如果已经保存了 `dashboard.password.txt`，这个命令会直接读取本地密码文件；如果没有保存，
-会要求输入网页访问密码，输入内容不会显示在屏幕上。然后它会以 `live` 模式运行
-`tdx_shenxian_quant.py`，并按照 `dashboard.config.txt` 里的 `AUTO_UPLOAD` 决定是否上传。
-只扫描一次可以用：
-
-```powershell
-npm run run:once:auto-upload
-```
-
-## 安全注意
-
-- 访问密码一定要足够长，建议至少 12-20 位，包含大小写、数字或符号。
-- 不要把 `TDX_DASHBOARD_VIEW_PASSWORD` 写进代码或提交到 GitHub。
-- `dashboard.password.txt` 是本机明文密码文件，不要发给别人，也不要上传到网盘或 GitHub。
-- GitHub 免费公开仓库的源码和加密数据都是公开的，安全性依赖访问密码强度。
-- 如果怀疑密码泄漏，换一个新密码，重新生成 `latest.enc.json` 并推送。
+- 鏇寸ǔ瀹氱殑鐩樹腑鍛ㄦ湡K绾跨敓鎴愩€?- 鏇存竻鏅扮殑涔板崠淇″彿鍒嗗眰銆?- 鏇村畬鏁寸殑棰樻潗鍜屼富钀ヤ笟鍔¤В閲娿€?- 鏇撮€傚悎鎵嬫満绔煡鐪嬬殑甯冨眬銆?- 鏇撮珮鍙潬鎬х殑杩滅▼鍚屾鍜屽紓甯告仮澶嶃€?
