@@ -8,6 +8,7 @@ const state = {
   mockMode: false,
   latest: null,
   refreshTimer: null,
+  buyView: "realtime",
 };
 
 const els = {
@@ -25,6 +26,8 @@ const els = {
   holdingCount: document.querySelector("#holdingCount"),
   latestSignal: document.querySelector("#latestSignal"),
   buyMeta: document.querySelector("#buyMeta"),
+  buyRealtimeTab: document.querySelector("#buyRealtimeTab"),
+  buyFixedTab: document.querySelector("#buyFixedTab"),
   sellMeta: document.querySelector("#sellMeta"),
   holdingsMeta: document.querySelector("#holdingsMeta"),
   buyTable: document.querySelector("#buyTable"),
@@ -204,6 +207,39 @@ function newestSignalsFirst(items) {
     .map((entry) => entry.item);
 }
 
+function isRealtimeAlert(item) {
+  const reason = String(item?.reason || "").trim();
+  return item?.is_realtime === true || reason.includes("实时");
+}
+
+function splitBuyAlerts(items) {
+  const realtime = [];
+  const fixed = [];
+  for (const item of items || []) {
+    if (isRealtimeAlert(item)) {
+      realtime.push(item);
+    } else {
+      fixed.push(item);
+    }
+  }
+  return { realtime, fixed };
+}
+
+function activeBuyAlerts(split) {
+  return state.buyView === "fixed" ? split.fixed : split.realtime;
+}
+
+function updateBuyTabs(split) {
+  const realtimeActive = state.buyView === "realtime";
+  const fixedActive = state.buyView === "fixed";
+  els.buyRealtimeTab.textContent = `实时检测 ${split.realtime.length}`;
+  els.buyFixedTab.textContent = `固定时间 ${split.fixed.length}`;
+  els.buyRealtimeTab.className = `signal-tab realtime${realtimeActive ? " active" : ""}`;
+  els.buyFixedTab.className = `signal-tab fixed${fixedActive ? " active" : ""}`;
+  els.buyRealtimeTab.setAttribute("aria-pressed", String(realtimeActive));
+  els.buyFixedTab.setAttribute("aria-pressed", String(fixedActive));
+}
+
 const INDUSTRY_COLORS = [
   "#b42318",
   "#026aa2",
@@ -371,26 +407,41 @@ function renderHoldings(codes) {
 }
 
 function renderDashboard(payload) {
+  state.latest = payload;
   const metadata = payload.metadata || {};
   const buyAlerts = payload.buy_alerts || payload.alerts || [];
+  const buySplit = splitBuyAlerts(buyAlerts);
+  const visibleBuyAlerts = activeBuyAlerts(buySplit);
   const sellAlerts = payload.sell_alerts || [];
   const holdingCodes = payload.holding_codes || [];
   const latestTime = newestSignalTime([...buyAlerts, ...sellAlerts]);
   const generatedAt = metadata.generated_at || metadata.encrypted_at || "-";
   const period = metadata.period || "60m";
+  const buyViewLabel = state.buyView === "fixed" ? "固定时间" : "实时检测";
 
   els.buyCount.textContent = String(buyAlerts.length);
   els.sellCount.textContent = String(sellAlerts.length);
   els.holdingCount.textContent = String(holdingCodes.length);
   els.latestSignal.textContent = compactTime(latestTime);
-  els.buyMeta.textContent = `${period} · ${metadata.sector || "QMTREP"}`;
+  updateBuyTabs(buySplit);
+  els.buyMeta.textContent = `${buyViewLabel} ${visibleBuyAlerts.length} 条 · ${period} · ${metadata.sector || "QMTREP"}`;
   els.sellMeta.textContent = `${sellAlerts.length} 条`;
   els.holdingsMeta.textContent = `${holdingCodes.length} 只`;
-  els.buyTable.innerHTML = renderSignalRows(buyAlerts, "buy");
+  els.buyTable.innerHTML = renderSignalRows(visibleBuyAlerts, "buy");
   els.sellTable.innerHTML = renderSignalRows(sellAlerts, "sell");
   els.holdingsList.innerHTML = renderHoldings(holdingCodes);
   els.subtitle.textContent = `生成时间 ${generatedAt}${state.mockMode ? " · 本地预览" : ""}`;
   setStatus(state.mockMode ? "本地预览" : "已解密", "ok");
+}
+
+function setBuyView(view) {
+  if (view !== "realtime" && view !== "fixed") {
+    return;
+  }
+  state.buyView = view;
+  if (state.latest) {
+    renderDashboard(state.latest);
+  }
 }
 
 function startRefreshLoop() {
@@ -447,6 +498,9 @@ els.refreshButton.addEventListener("click", async () => {
     els.subtitle.textContent = error.message;
   }
 });
+
+els.buyRealtimeTab.addEventListener("click", () => setBuyView("realtime"));
+els.buyFixedTab.addEventListener("click", () => setBuyView("fixed"));
 
 async function boot() {
   if (localMockAllowed && window.location.hash === "#demo") {
